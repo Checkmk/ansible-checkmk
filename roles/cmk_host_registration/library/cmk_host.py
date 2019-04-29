@@ -133,6 +133,7 @@ class cmk_host:
         self._payload = payload
         self._ansible = ansible
         self._session = requests.Session()
+        self._needed_attr = {}
         if ansible.params['validate_certs'] == 'yes':
             self._verify = True
         else:
@@ -145,28 +146,21 @@ class cmk_host:
         self._payload['action'] = action
         self._payload['request'] = repr(request)
         try:
-            response = eval(self._session.post(self._url, params=self._payload, verify=self._verify).text)
+            response = eval(self._session.post(self.
+                                               url,
+                                               params=self._payload,
+                                               verify=self._verify).text)
             self.result = response['result']
             self.result_code = response['result_code']
         except requests.exceptions.RequestException as err:
             self._ansible.fail_json(msg=str(err), payload=self._payload)
+        except:
+            self._ansible.fail_json(msg='Failed to connect to site')
 
 
-    def get(self):
-        self._query('get_host', {'hostname': self._ansible.params['name'], 'effective_attributes':1})
+    def _move(self):
+        return True
 
-
-    def add(self):
-        request = dict(
-                hostname = self._ansible.params['name'],
-                folder = self._ansible.params.get('folder', ''),
-                attributes = {},
-                )
-        for key, value in self._ansible.params.iteritems():
-            if self._optional_attr(key) and value is not None:
-                request['attributes'][key] = self._ansible.params[key]
-
-        self._query('add_host', request)
 
     def _optional_attr(self, key):
         if key in [
@@ -176,17 +170,52 @@ class cmk_host:
                 'addressv6',
                 'snmp',
                 'agent',
-                'parents',
-                ]:
+                'parents',]:
             return True
         return False
 
+    def _create_attr_request(self):
+        attributes = {}
+        for key, value in self._ansible.params.iteritems():
+            if self._optional_attr(key) and value is not None:
+                attributes[key] = self._ansible.params[key]
+        return attributes
+
+    def _create_request(self):
+        return {
+            'hostname': self._ansible.params['name'],
+            'folder': self._ansible.params.get('folder', ''),
+            'attributes': self._create_attr_request(),
+            }
+
+    def _attr_diff(self):
+        self._needed_attr = self._create_attr_request()
+        for key, value in self._needed_attr.iteritems():
+            if value is not self._ansible.params[key]:
+                return True
+
+
+    def get(self):
+        self._query('get_host', {'hostname': self._ansible.params['name'],
+                                 'effective_attributes':1})
+
+
+    def add(self):
+        self._query('add_host', self._create_request())
+
+
     def edit(self):
-        return 0, "Edited host"
+        self.delete()
+        self.add()
 
 
-    def _move(self):
-        return True
+    def config_changed(self):
+        if self.result['hostname'] != self._ansible.params['name']:
+            return True
+        elif self.result['path'] != self._ansible.params['folder']:
+            return True
+
+        return self._attr_diff()
 
 
     def delete(self):
@@ -196,41 +225,42 @@ class cmk_host:
 def main():
     result = {}
     args = dict(
-            # Required
-            url = dict(type='str', required=True),
-            user = dict(type='str', required=True),
-            password = dict(type='str', required=True, no_log=True),
-            name = dict(type='str', required=True),
-            # Optional
-            alias = dict(type='str',),
-            folder = dict(type='str',),
-            address_family = dict(type='str', choices=['ipv4','ipv6','all','no']),
-            addressv4 = dict(type='str'),
-            addressv6 = dict(type='str'),
-            snmp = dict(type='str', choices=['snmpv1', 'snmpv2/3', 'no']),
-            agent = dict(type='str', choices=['agent', 'datasources', 'all', 'no']),
-            parents = dict(type='list'),
-            # Meta
-            state = dict(type='str', default='present', choices=['present', 'absent']),
-            validate_certs = dict(type='str', default='yes', choices=['yes', 'no']),
-            )
+        # Required
+        url=dict(type='str', required=True),
+        user=dict(type='str', required=True),
+        password=dict(type='str', required=True, no_log=True),
+        name=dict(type='str', required=True),
+        # Optional
+        alias=dict(type='str',),
+        folder=dict(type='str',),
+        address_family=dict(type='str', choices=['ipv4', 'ipv6', 'all', 'no']),
+        addressv4=dict(type='str'),
+        addressv6=dict(type='str'),
+        snmp=dict(type='str', choices=['snmpv1', 'snmpv2/3', 'no']),
+        agent=dict(type='str', choices=['agent', 'datasources', 'all', 'no']),
+        parents=dict(type='list'),
+        # Meta
+        state=dict(type='str', default='present', choices=['present', 'absent']),
+        validate_certs=dict(type='str', default='yes', choices=['yes', 'no']),
+        )
 
     ansible = AnsibleModule(
-            argument_spec=args,
-            supports_check_mode=False
-            )
+        argument_spec=args,
+        supports_check_mode=False
+        )
 
-    url= '%s/check_mk/webapi.py' % ansible.params['url']
+    url = '%s/check_mk/webapi.py' % ansible.params['url']
     payload = dict(
-            request_format = 'python',
-            output_format = 'python',
-            _username = ansible.params['user'],
-            _secret = ansible.params['password'],
-            )
+        request_format='python',
+        output_format='python',
+        _username=ansible.params['user'],
+        _secret=ansible.params['password'],
+        )
 
     cmk = cmk_host(url, payload, ansible)
     cmk.get()
 
+    changed = False
     if ansible.params['state'] == 'present':
         if cmk.result_code == 1:
             cmk.add()
@@ -241,16 +271,15 @@ def main():
     elif ansible.params['state'] == 'absent':
         if cmk.result_code == 0:
             cmk.delete()
-            changed= True
-
+            changed = True
 
     result = dict(
-            changed=changed,
-            action=cmk._payload['action'],
-            request=cmk._payload['request'],
-            result=cmk.result,
-            result_code=cmk.result_code,
-            )
+        changed=changed,
+        action=cmk._payload['action'],
+        request=cmk._payload['request'],
+        result=cmk.result,
+        result_code=cmk.result_code,
+        )
     ansible.exit_json(**result)
 
 if __name__ == '__main__':

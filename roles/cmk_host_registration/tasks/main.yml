@@ -1,11 +1,20 @@
 ---
 
+- set_fact:
+    OS: "linux"
+  when: ansible_system == "Linux"
+
+- set_fact:
+    OS: "windows"
+  when: ansible_os_family == "Windows"
+
 - name: Add host
   cmk_host:
-    url: http://192.168.56.1/mysite
-    user: automation
-    password: 2a31be55-1912-4809-947a-2d70644ba5f4
-    name: testhost
-    folder: automation/linux
+    url: "{{ cmk_site_url }}"
+    user: "{{ cmk_site_user }}"
+    password: "{{ cmk_site_password }}"
+    #name: "{{ hostvars['ansible_fqdn'] }}"
+    name: "{{ ansible_fqdn }}"
+    folder: "{{ cmk_site_default_folder }}/{{ OS }}"
     state: present
   delegate_to: localhost
