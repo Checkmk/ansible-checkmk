@@ -19,4 +19,8 @@ Execute your playbook with a bunch of testhosts:
 
     ansible-playbook -i hosts.ini playbook-example.yml
 
-Further information will be included in each role.
+## Further information to each role
+
+* [Installation of check**mk** agent](./README_cmk_host_agent.md)
+* [Installation of check**mk** agent plugins](./README_cmk_host_plugins.md)
+* [Registration of hosts in check**mk**](./README_cmk_host_registration.md)
