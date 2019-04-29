@@ -7,8 +7,8 @@ activation of changes.
 
 This role currently covers:
 * Adding or readding a host into a check**mk** site
-* Do a service discovery for this host
-* Activate the changes on the site
+* ~~Do a service discovery for this host~~
+* ~~Activate the changes on the site~~
 
 ## Variables that may need manual interaction
 
