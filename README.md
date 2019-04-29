@@ -15,7 +15,7 @@ Things to do for the first test run:
 * In the host.ini: Fill it with your hosts and remove the examples
 * In the playbook: Uncomment the roles you want to test
 
-Execute your playbook with bunch of testhosts:
+Execute your playbook with a bunch of testhosts:
 
     ansible-playbook -i hosts.ini playbook-example.yml
 
