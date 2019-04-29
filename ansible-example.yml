@@ -1,0 +1,9 @@
+---
+- hosts: g_cmk_hosts
+  # fetch information about the
+  # remote host (-> ansible_os_family )
+  gather_facts: yes
+  roles:
+      - cmk_host_agent
+      - cmk_host_plugins
+      #- cmk_site_host_registration
