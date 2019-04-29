@@ -1,0 +1,11 @@
+---
+
+- name: Add host
+  cmk_host:
+    url: http://192.168.56.1/mysite
+    user: automation
+    password: 2a31be55-1912-4809-947a-2d70644ba5f4
+    name: testhost
+    folder: automation/linux
+    state: present
+  delegate_to: localhost
