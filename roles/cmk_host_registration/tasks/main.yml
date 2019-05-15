@@ -9,7 +9,7 @@
   when: ansible_os_family == "Windows"
 
 - name: Add host
-  cmk_host:
+  checkmk_host:
     url: "{{ cmk_site_url }}"
     user: "{{ cmk_site_user }}"
     password: "{{ cmk_site_password }}"

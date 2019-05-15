@@ -6,17 +6,20 @@ modified. Additionally there will be a service discovery and the
 activation of changes. 
 
 This role currently covers:
-* Adding or readding a host into a check**mk** site
-* ~~Do a service discovery for this host~~
-* ~~Activate the changes on the site~~
+* Keep a host with it's configuration present or absent in a check**mk**
+  site
+* Do a service discovery for this host if resolving present/absent results
+  in changes
+* Activate the changes on the site if resolving present/absent results in
+  changes
 
 ## Variables that may need manual interaction
 
 * `cmk_site_url: "https://myserver.corp.org/mysite"`
-* `cmk_site_default_folder: "automation"`
+* `cmk_site_default_folder: "ansible"`
 
 ## Wishlist of features that may be added
 
-* Support for more attributes
+* More user friendly support of optional attributes
 * Support for cluster hosts?
 * ???
