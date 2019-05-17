@@ -5,6 +5,7 @@ from collections import namedtuple
 import ast
 import requests
 
+
 class WebAPI(object):
     def __init__(self, session):
         self.url = session.url
@@ -31,11 +32,9 @@ class WebAPI(object):
         except:
             raise
 
-
     @property
     def result(self):
         return self.result
-
 
     @property
     def result_code(self):
@@ -48,7 +47,6 @@ class DataTuple(object):
         self.data = name(url, username, secret, verify)
 
 
-
 class Hosts(object):
     def __init__(self, url, username, secret, verify=True, hostname=None):
         url = "%s/check_mk/webapi.py" % url.rstrip('/')
@@ -56,62 +54,46 @@ class Hosts(object):
         self.session = WebAPI(session.data)
         self.hostname = hostname
 
+    def _prepare_hostname(self, hostname=None):
+        if hostname:
+            self.hostname = hostname
 
-    def pre_call(fn):
-        def _decorator(self, *args, **kwargs):
-            if len(args) > 0:
-                hostname = args[0]
-            else:
-                hostname = kwargs.get('hostname', None)
-
-            if not hostname:
+    def pre_call(name):
+        def _build_payload(fn):
+            def _decorator(self, **kwargs):
+                self._prepare_hostname(kwargs.get('hostname', None))
                 if not self.hostname:
-                    return fn(None)
-                hostname = self.hostname
+                    return fn(self, payload=None)
 
-            if kwargs.get('payload', None):
-                payload = kwargs['payload']
-            else: # we need to build the payload manually
-                payload = {'hostname': hostname}
-                payload['folder'] = kwargs.get('folder', '')
-                if kwargs.get('attributes', None):
-                    payload['attributes'] = kwargs['attributes']
-                if kwargs.get('effective_attributes', None) in [1,0]:
-                    payload['effective_attributes'] = kwargs['effective_attributes']
+                if kwargs.get('payload', None):
+                    payload = kwargs['payload']
+                else: # we need to build the payload manually
+                    payload = {'hostname': self.hostname}
+                    if name == 'get':
+                        payload['effective_attributes'] = kwargs.get('effective_attributes', 0)
+                    if name in ['add', 'edit'] and kwargs.get('attributes', None):
+                        payload['attributes'] = kwargs['attributes']
+                    if name == 'add':
+                        payload['folder'] = kwargs.get('folder', '')
 
-            return fn(self, payload=payload)
-        return _decorator
+                return fn(self, payload=payload)
+            return _decorator
+        return _build_payload
 
-
-    @pre_call
+    @pre_call('get')
     def get(self, hostname=None, effective_attributes=None, payload=None):
-        if not payload:
-            return None
-        get_payload = {'hostname': payload['hostname'],
-                       'effective_attributes': payload['effective_attributes']
-                       }
-        return self.session.query('get_host', get_payload)
+        return self.session.query('get_host', payload)
 
-
-    @pre_call
+    @pre_call('add')
     def add(self, hostname=None, folder=None, attributes=None, payload=None):
-        if not payload:
-            return None
         return self.session.query('add_host', payload)
 
-
-    @pre_call
+    @pre_call('delete')
     def delete(self, hostname=None, payload=None):
-        if not payload:
-            return None
-        del_payload = {'hostname': payload['hostname']}
-        return self.session.query('delete_host', del_payload)
+        return self.session.query('delete_host', payload)
 
-
-    @pre_call
-    def edit(self, hostname=None, folder=None, attributes=None, payload=None):
-        if not payload:
-            return None
+    @pre_call('edit')
+    def edit(self, hostname=None, attributes=None, payload=None):
         return self.session.query('edit_host', payload)
 
 
@@ -123,22 +105,20 @@ class Services(object):
         self.hostname = hostname
 
 
+    def _prepare_hostname(self, hostname=None):
+        if hostname:
+            self.hostname = hostname
+
     def pre_call(fn):
         def _decorator(self, *args, **kwargs):
-            if len(args) > 0:
-                hostname = args[0]
-            else:
-                hostname = kwargs.get('hostname', None)
-
-            if not hostname:
-                if not self.hostname:
-                    return fn(None)
-                hostname = self.hostname
+            self._prepare_hostname(kwargs.get('hostname', None))
+            if not self.hostname:
+                return fn(self, payload=None)
 
             if kwargs.get('payload', None):
                 payload = kwargs['payload']
             else:
-                payload = {'hostname': hostname}
+                payload = {'hostname': self.hostname}
                 if kwargs.get('mode', None):
                     payload['mode'] = kwargs['mode']
 
@@ -147,8 +127,6 @@ class Services(object):
 
     @pre_call
     def discover(self, hostname=None, mode=None, payload=None):
-        if not payload:
-            return None
         return self.session.query('discover_services', payload)
 
 
@@ -173,7 +151,6 @@ class Changes(object):
                     payload['comment'] = str(kwargs['comment'])
             return fn(self, payload=payload)
         return _decorator
-
 
     @pre_call
     def activate(self, sites=None, allow_foreign_changes=None, comment=None, payload=None):
