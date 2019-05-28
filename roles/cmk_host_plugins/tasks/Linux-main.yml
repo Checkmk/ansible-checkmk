@@ -17,7 +17,7 @@
   with_items: "{{ CMK_PLUGINS }}"
   loop_control:
     loop_var: needed_plugin
-  when: CMK_PLUGINS|length>0
+  when: CMK_PLUGINS|length > 0
 
 - name: Get obsolete installed Plugins
   set_fact:
@@ -27,5 +27,5 @@
   with_items: "{{ plugin_list }}"
   loop_control:
     loop_var: obsolete_plugin
-  when: obsolete_plugin > 0
+  when: obsolete_plugin|length > 0
 
