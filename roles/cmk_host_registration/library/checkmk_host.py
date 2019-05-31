@@ -13,67 +13,29 @@ short_description: Managing hosts in checkMK
 version_added: "0.1"
 
 description:
-    - "With the C(checkmk_host) module allows to add/edit/delete hosts"
+    - "With the C(checkmk_host) module it is possible to add/edit/delete hosts via the checkmk API"
 
 author: "Marcel Arentz (@ma@mathias-kettner.de)"
 
 options:
     site:
-        description:
-            - URL to the Check_MK instance as HTTP or HTTPS
+        description: URL to the Check_MK instance as HTTP or HTTPS. The URL just needs to have a format like C(https://myserver.com/mysite)
         required: true
     user:
-        description:
-            - The user to authenticate against the site
+        description: The user to authenticate against the site
         required: true
     password:
-        description:
-            - The password to authenticate against the site
+        description: The password to authenticate against the site
         required: true
     name:
         description: Name of the host
         required: true
-    alias:
-        description: An Alias of the host
-        required: false
     folder:
-        description: Folder to put the host in
+        description: Folder to put the host in. A folder is always defined as a relative path.
         required: false
         default: ''
-    address_family:
-        description: Set IP family to use
-        required: false
-        default: ipv4
-        choices:
-            - ipv4
-            - ipv6
-            - all
-            - no
-    addressv4:
-        description: IPv4 address to assign to the host
-        required: false
-    addressv6:
-        description: IPv6 address to assign to the host
-        required: false
-    snmp:
-        description: If the host should be monitored by snmp
-        required: false
-        default: none
-        choices:
-            - snmpv1
-            - snmpv2/v3
-            - no
-    agent:
-        description: If the host should be monitored by agent or datasource program
-        required: false
-        default: agent
-        choices:
-            - agent
-            - datasources
-            - all
-            - no
-    parents:
-        description: Parents of the host
+    attributes:
+        description: A host can have several attributes except it's name and the folder. These attributes are summarized in a dictionary.
         required: false
     state:
         description: If present, the host will be created if it does not exists yet. If absent, the host will remove, if present.
@@ -106,7 +68,9 @@ EXAMPLES = '''
     password: mypassword
     name: {{ inventory_hostname }}
     folder: automation/linux
-    addressv4: 192.168.56.42
+    attributes:
+      addressv4: 192.168.56.42
+      alias: My Alias
 '''
 
 RETURN = '''
@@ -116,9 +80,11 @@ request:
 result:
     - description: The result from the Check_MK site
     type: dict
-result_code:
-    - description: The result code that was passed to the output
-    type: int
+service_discovery:
+    - description: If the services are discvored directly, the result and the result code will be available here
+activate_changes:
+    - description: If changes are activates directly, the result and the result code will be available here
+    type: dict
 '''
 
 
