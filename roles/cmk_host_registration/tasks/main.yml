@@ -13,8 +13,10 @@
     url: "{{ cmk_site_url }}"
     user: "{{ cmk_site_user }}"
     password: "{{ cmk_site_password }}"
-    #name: "{{ hostvars['ansible_fqdn'] }}"
     name: "{{ ansible_fqdn }}"
     folder: "{{ cmk_site_default_folder }}/{{ OS }}"
     state: present
+    discover_services: yes
   delegate_to: localhost
+  notify:
+    - activate changes

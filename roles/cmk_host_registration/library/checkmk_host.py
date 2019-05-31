@@ -169,7 +169,7 @@ def main():
         attributes=dict(type='dict', default={}),
         folder=dict(type='str', default=''),
         validate_certs=dict(type='str', default='yes', choices=['yes', 'no']),
-        discover_services=dict(type='str', default='no', choices=['no', 'refresh']),
+        discover_services=dict(type='str', default='no', choices=['yes', 'no']),
         activate_changes=dict(type='str', default='no', choices=['yes', 'no']),
         # Meta
         state=dict(type='str', default='present', choices=['present', 'absent']),
@@ -227,7 +227,7 @@ def main():
             ansible.params['password'],
             verify=ansible.params['validate_certs'],
             hostname=hostname)
-        discovery = service.discover(mode=discover)
+        discovery = service.discover(mode='refresh')
         ansible_result['service_discovery'] = dict(
             result=discovery['result'],
             status=discovery['result_code'],
