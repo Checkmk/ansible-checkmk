@@ -11,3 +11,4 @@
   yum:
       name: "{{ cmk_agent.file.rpm }}"
       state: present
+      disable_gpg_check: yes
