@@ -38,10 +38,8 @@ options:
     allow_foreign_changes:
         description: Sometimes other users made changes meanwhile. This option specifies if the changes should be activated if there are configuration changes from other users. 
         required: false
-        default: no
-        choices:
-            - yes
-            - no
+        default: False
+        type: bool
     comment:
         description: You can optionally add a comment to this activation. 
         required: false
@@ -49,10 +47,8 @@ options:
     validate_certs:
         description: Check SSL certificate
         required: false
-        default: yes
-        choices:
-            - yes
-            - no
+        default: True
+        type: bool
 '''
 
 EXAMPLES = '''
@@ -91,9 +87,8 @@ from ansible.module_utils.checkmk_api import Changes
 class CallChanges:
     def __init__(self, session):
         self.session = session
-        self.hostname = session.hostname
 
-    def activate(self, payload):
+    def activate(self, payload, ansible):
         result = self.session.activate(payload=payload)
         result_output = result['result']
 
@@ -114,9 +109,9 @@ def main():
         password=dict(type='str', required=True, no_log=True),
         # Optional
         sites=dict(type='list', default=None),
-        allow_foreign_changes=dict(type='str', default='no', choices=['yes', 'no']),
+        allow_foreign_changes=dict(type='bool', default=True),
         comments=dict(type='str', default=None),
-        validate_certs=dict(type='str', default='yes', choices=['yes', 'no']),
+        validate_certs=dict(type='bool', default=True),
         )
 
     ansible = AnsibleModule(
@@ -137,14 +132,14 @@ def main():
         }
 
     if ansible.params['comments']:
-        payload['comments'] = ansible.params['comments']
+        payload['comment'] = ansible.params['comments']
     if sites:
         payload['sites'] = sites
         payload['mode'] = 'specific'
     else:
         payload['mode'] = 'dirty'
-    
-    changed, result = changes.activate(payload)    
+
+    changed, result = changes.activate(payload, ansible)
 
     ansible_result = dict(
         sites=sites,

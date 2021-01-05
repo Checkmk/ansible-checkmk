@@ -46,10 +46,8 @@ options:
     validate_certs:
         description: Check SSL certificate
         required: false
-        default: yes
-        choices:
-            - yes
-            - no
+        default: True
+        type: bool
 '''
 
 EXAMPLES = '''
@@ -113,7 +111,7 @@ def main():
         name=dict(type='str', required=True),
         # Optional
         mode=dict(type='str', default='new', choices=['']),
-        validate_certs=dict(type='str', default='yes', choices=['yes', 'no']),
+        validate_certs=dict(type='bool', default=True),
         )
 
     ansible = AnsibleModule(

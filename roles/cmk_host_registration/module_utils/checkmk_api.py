@@ -27,7 +27,7 @@ class WebAPI(object):
             payload['request'] = repr(request)
 
         try:
-            response = requests.get(self.url, params=payload, verify=self.verify, timeout=5)
+            response = requests.get(self.url, params=payload, verify=self.verify, timeout=30)
             return ast.literal_eval(response.text)
         except:
             raise
