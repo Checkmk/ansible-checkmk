@@ -13,11 +13,11 @@ Things to do for the first test run:
 * In each role: adjust the defaults, if needed. At the moment you still
   need to set the check**mk** version manually. 
 * In the host.ini: Fill it with your hosts and remove the examples
-* In the playbook: Uncomment the roles you want to test
+* In the playbook: Find the tags to run the roles you want
 
 Execute your playbook with a bunch of testhosts:
 
-    ansible-playbook -i hosts.ini playbook-example.yml
+    ansible-playbook -i hosts.ini playbook-example.yml --tags all
 
 ## Further information to each role
 
