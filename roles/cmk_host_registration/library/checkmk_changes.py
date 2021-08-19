@@ -91,9 +91,8 @@ from ansible.module_utils.checkmk_api import Changes
 class CallChanges:
     def __init__(self, session):
         self.session = session
-        self.hostname = session.hostname
 
-    def activate(self, payload):
+    def activate(self, payload, ansible):
         result = self.session.activate(payload=payload)
         result_output = result['result']
 
@@ -133,18 +132,18 @@ def main():
         verify=ansible.params['validate_certs'],))
 
     payload = {
-        'allow_foreign_changes': ansible.params['allow_foreign_changes']
+        'allow_foreign_changes': '1' if ansible.params['allow_foreign_changes'] == 'yes' else '0'
         }
 
     if ansible.params['comments']:
-        payload['comments'] = ansible.params['comments']
+        payload['comment'] = ansible.params['comments']
     if sites:
         payload['sites'] = sites
         payload['mode'] = 'specific'
     else:
         payload['mode'] = 'dirty'
     
-    changed, result = changes.activate(payload)    
+    changed, result = changes.activate(payload, ansible)    
 
     ansible_result = dict(
         sites=sites,
