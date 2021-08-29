@@ -128,7 +128,7 @@ def main():
         verify=ansible.params['validate_certs'],))
 
     payload = {
-        'allow_foreign_changes': ansible.params['allow_foreign_changes']
+        'allow_foreign_changes': '1' if ansible.params['allow_foreign_changes'] == 'yes' else '0'
         }
 
     if ansible.params['comments']:
