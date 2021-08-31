@@ -47,10 +47,18 @@ options:
     validate_certs:
         description: Check SSL certificate
         required: false
-        default: yes
-        choices:
-            - yes
-            - no
+        default: True
+        type: bool
+    service_discovery:
+        description: Start the service discovery after adding/changing the host
+        required: false
+        default: True
+        type: bool
+    activate_changes:
+        description: Activate the changes
+        required: false
+        default: True
+        type: bool
 '''
 
 EXAMPLES = '''
@@ -139,7 +147,7 @@ class CallHost:
                 return True, self.session.edit(payload=payload)['result']
 
             # We need to figure what to do with every custom key
-            for key, value in existing_attr.iteritems():
+            for key, value in existing_attr.items():
                 if key not in needed_attr:
                     unset_attr.append(key)
                 elif value != needed_attr[key]:
@@ -168,9 +176,9 @@ def main():
         # Optional
         attributes=dict(type='dict', default={}),
         folder=dict(type='str', default=''),
-        validate_certs=dict(type='str', default='yes', choices=['yes', 'no']),
-        discover_services=dict(type='str', default='no', choices=['yes', 'no']),
-        activate_changes=dict(type='str', default='no', choices=['yes', 'no']),
+        validate_certs=dict(type='bool', default=True),
+        discover_services=dict(type='bool', default=True),
+        activate_changes=dict(type='bool', default=True),
         # Meta
         state=dict(type='str', default='present', choices=['present', 'absent']),
         )
@@ -220,7 +228,7 @@ def main():
         result=result,
         )
 
-    if discover != 'no' and changed == True:
+    if discover and changed == True:
         service = Services(
             ansible.params['url'],
             ansible.params['user'],
@@ -233,7 +241,7 @@ def main():
             status=discovery['result_code'],
             )
 
-    if activate != 'no' and changed == True:
+    if activate and changed == True:
         changes = Changes(
             ansible.params['url'],
             ansible.params['user'],
