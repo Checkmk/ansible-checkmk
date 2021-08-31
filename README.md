@@ -17,7 +17,7 @@ Things to do for the first test run:
 
 Execute your playbook with a bunch of testhosts:
 
-    ansible-playbook -i hosts.ini playbook-example.yml --tags all
+    ansible-playbook -i hosts.ini ansible-example.yml --tags all
 
 ## Further information to each role
 
