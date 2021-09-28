@@ -6,7 +6,7 @@
     dest: "{{ plugins_path }}/{{ needed_plugin }}"
     owner: root
     group: root
-    mode: 0500 # Prevent users from editing this script on the host
+    mode: 0500  # Prevent users from editing this script on the host
 
 - name: Install config file for {{ needed_plugin }}
   copy:
@@ -14,5 +14,5 @@
     dest: "{{ config_path }}/{{ cmk_plugin_base[ needed_plugin ].cfg }}"
     owner: root
     group: root
-    mode: 0400 # Prevent users from editing this file on the host
+    mode: 0400  # Prevent users from editing this file on the host
   when: cmk_plugin_base[ needed_plugin ].cfg is defined

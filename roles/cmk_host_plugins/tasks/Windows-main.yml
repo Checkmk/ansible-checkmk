@@ -6,9 +6,9 @@
   changed_when: false
 
 - name: Get installed software
-  win_shell: "(Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object DisplayName | Format-Table -HideTableHeaders | Out-String).trim()"
+  win_shell: "(Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object DisplayName | Format-Table -HideTableHeaders | Out-String).trim()"  # noqa yaml
   register: software_list
-  when: by_package == true
+  when: by_package
 
 - include_tasks: "Windows-search.yml"
   with_dict: "{{ cmk_plugin_base }}"

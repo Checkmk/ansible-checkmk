@@ -2,11 +2,13 @@
 
 - name: Get installed plugins
   shell: "ls {{ plugins_path }}/"
+  # noqa command-instead-of-shell
   register: plugin_list
   changed_when: false
 
 - package_facts:
-  when: by_package == true
+  # noqa unnamed-task
+  when: by_package
 
 - include_tasks: "Linux-search.yml"
   with_dict: "{{ cmk_plugin_base }}"
@@ -28,4 +30,3 @@
   loop_control:
     loop_var: obsolete_plugin
   when: obsolete_plugin|length > 0
-

@@ -5,6 +5,6 @@
     url: "{{ cmk_site_url }}"
     user: "{{ cmk_site_user }}"
     password: "{{ cmk_site_password }}"
-    allow_foreign_changes: yes
+    allow_foreign_changes: true
     comments: 'Changes made by Ansible'
   delegate_to: localhost

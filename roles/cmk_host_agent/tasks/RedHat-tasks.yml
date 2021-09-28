@@ -7,8 +7,8 @@
     dest: "{{ cmk_host_linux_tmp }}"
 
 - name: Install agent -> {{ cmk_agent.file.rpm }}
-  become: yes
+  become: true
   yum:
-      name: "{{ cmk_agent.file.rpm }}"
-      state: present
-      disable_gpg_check: yes
+    name: "{{ cmk_agent.file.rpm }}"
+    state: present
+    disable_gpg_check: true

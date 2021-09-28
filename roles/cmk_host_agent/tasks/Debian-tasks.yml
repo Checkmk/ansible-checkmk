@@ -7,7 +7,7 @@
     dest: "{{ cmk_host_linux_tmp }}"
 
 - name: Install agent -> {{ cmk_agent.file.deb }}
-  become: yes
+  become: true
   apt:
-      deb: "{{ cmk_agent.file.deb }}"
-      state: present
+    deb: "{{ cmk_agent.file.deb }}"
+    state: present

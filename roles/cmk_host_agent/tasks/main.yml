@@ -1,4 +1,6 @@
 ---
-#- include_vars: cmk_agent_win.yml
+# - include_vars: cmk_agent_win.yml
 - include_vars: cmk_agent_generic.yml
+# noqa unnamed-task
 - include_tasks: "{{ ansible_os_family }}-tasks.yml"
+# noqa unnamed-task

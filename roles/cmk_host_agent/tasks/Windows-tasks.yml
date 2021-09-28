@@ -12,16 +12,18 @@
   changed_when: cmk_agent_version.stdout_lines[0] != cmk_version
 
 - name: Download agent -> {{ cmk_agent.url.win }}
+  # noqa no-handler
   win_get_url:
-      url: "{{ cmk_agent.url.win }}"
-      dest: "{{ cmk_host_windows_tmp }}"
+    url: "{{ cmk_agent.url.win }}"
+    dest: "{{ cmk_host_windows_tmp }}"
   when: cmk_agent_version.changed
 
 - name: Install agent -> {{ cmk_agent.file.win }}
+  # noqa no-handler
   win_package:
-      path: "{{ cmk_agent.file.win }}"
-      state: present
-      wait: True
+    path: "{{ cmk_agent.file.win }}"
+    state: present
+    wait: true
   when: cmk_agent_version.changed
 
 - name: Install agent config

@@ -3,17 +3,21 @@
 # Initialize list of plugins/configs to install
 
 - set_fact:
+  # noqa unnamed-task
     OS: "Linux"
   when: ansible_system == "Linux"
 
 - set_fact:
+  # noqa unnamed-task
     OS: "Windows"
   when: ansible_os_family == "Windows"
 
 - set_fact:
-    CMK_PLUGINS: [ ]
+  # noqa unnamed-task
+    CMK_PLUGINS: []
     cmk_plugin_base: "{{ cmk_host_plugins[ OS ] }}"
 
 # Install plugins based on OS system
 - include_vars: "{{ OS }}-vars.yml"
+  # noqa unnamed-task
 - include_tasks: "{{ OS }}-main.yml"

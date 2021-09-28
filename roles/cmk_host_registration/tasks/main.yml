@@ -1,10 +1,12 @@
 ---
 
 - set_fact:
+  # noqa unnamed-task
     OS: "linux"
   when: ansible_system == "Linux"
 
 - set_fact:
+  # noqa unnamed-task
     OS: "windows"
   when: ansible_os_family == "Windows"
 
@@ -16,7 +18,7 @@
     name: "{{ ansible_fqdn }}"
     folder: "{{ cmk_site_default_folder }}/{{ OS }}"
     state: present
-    discover_services: yes
+    discover_services: true
   delegate_to: localhost
   notify:
     - activate changes
