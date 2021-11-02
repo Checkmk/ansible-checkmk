@@ -15,4 +15,4 @@
   gather_facts: smart
   tags: [all, register]
   roles:
-      - cmk_site_host_registration
+      - cmk_host_registration
