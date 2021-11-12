@@ -17,6 +17,7 @@
     folder: "{{ cmk_site_default_folder }}/{{ OS }}"
     state: present
     discover_services: yes
+    validate_certs: "{{ cmk_validate_certs }}"
   delegate_to: localhost
   notify:
     - activate changes
