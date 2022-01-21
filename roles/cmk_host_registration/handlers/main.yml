@@ -7,4 +7,5 @@
     password: "{{ cmk_site_password }}"
     allow_foreign_changes: yes
     comments: 'Changes made by Ansible'
+    validate_certs: "{{ cmk_validate_certs }}"
   delegate_to: localhost
