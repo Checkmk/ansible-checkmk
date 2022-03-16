@@ -5,6 +5,11 @@ configuration of your monitoring. With this project we want to create and
 share roles and modules of ansible to simplify your first steps with
 ansible in combination with check**mk**.
 
+## Before you start
+We are currently working on our very own official
+[Ansible Collection](https://github.com/tribe29/ansible-collection-tribe29.checkmk).  
+That is a side project - just as this one - but we are confident, that you might
+like it, so make sure to check it out!
 ## Getting started
 
 At the beginning this project contains a simple **playbook** as an
