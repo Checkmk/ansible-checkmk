@@ -1,15 +1,21 @@
 # Ansible roles and modules
 
+# Deprecation Warning!
+We are deprecating this project in favor of our very own official
+[Ansible Collection](https://github.com/tribe29/ansible-collection-tribe29.checkmk). We are confident, that it will
+deliver just as much value, as this project, while being up-to-date
+with the Ansible ecosystem.  
+So what does that mean? We will leave this repository open until the end
+of October 2022 and archive it then.  
+See you on the other side!
+
+# Original README
+
 check**mk** already provides the needed APIs to automate the basic
 configuration of your monitoring. With this project we want to create and
 share roles and modules of ansible to simplify your first steps with
 ansible in combination with check**mk**.
 
-## Before you start
-We are currently working on our very own official
-[Ansible Collection](https://github.com/tribe29/ansible-collection-tribe29.checkmk).  
-That is a side project - just as this one - but we are confident, that you might
-like it, so make sure to check it out!
 ## Getting started
 
 At the beginning this project contains a simple **playbook** as an
