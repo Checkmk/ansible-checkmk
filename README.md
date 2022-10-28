@@ -1,12 +1,10 @@
 # Ansible roles and modules
 
-# Deprecation Warning!
-We are deprecating this project in favor of our very own official
+# This project is archived!
+We archived this project in favor of our very own official
 [Ansible Collection](https://github.com/tribe29/ansible-collection-tribe29.checkmk). We are confident, that it will
 deliver just as much value, as this project, while being up-to-date
 with the Ansible ecosystem.  
-So what does that mean? We will leave this repository open until the end
-of October 2022 and archive it then.  
 See you on the other side!
 
 # Original README
